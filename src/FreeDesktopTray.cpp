@@ -32,7 +32,7 @@ char* eventNames[] = { "XEvent0", "XEvent1",
 "MappingNotify", "LASTEvent",
 };
 
-FreeDesktopTray::FreeDesktopTray() : icon_(Icon_NoMessages), running_(false), message_id_(0)
+FreeDesktopTray::FreeDesktopTray() : icon_(Icon_NoMessages), running_(false), message_id_(0), popup_timeout_(3), dock_(true)
 {
 }
 
@@ -48,6 +48,26 @@ FreeDesktopTray* FreeDesktopTray::instance()
 	return instance_;
 }
 
+void FreeDesktopTray::setPopupTimeout(unsigned int timeout) 
+{
+	popup_timeout_ = timeout;
+}
+
+void FreeDesktopTray::setDock(bool d)
+{
+	bool old_dock_ = dock_;
+	dock_ = d;
+	if (running_ && (old_dock_ != dock_)) {
+		if (dock_) {
+			dock();
+		}
+		else {
+			XDestroyWindow(display_,icon_window_);
+			createIconWindow();
+		}
+	}
+}
+
 void FreeDesktopTray::setIcon(IconName icon) 
 {
 	icon_ = icon;
@@ -56,13 +76,13 @@ void FreeDesktopTray::setIcon(IconName icon)
 	}
 }
 
-void FreeDesktopTray::showMessage(const std::string& message)
+void FreeDesktopTray::showPopup(const std::string& message)
 {
-	if (!running_ || !tray_window_) {
+	if (!running_ || !tray_window_ || popup_timeout_ == 0) {
 		return;
 	}
 
-	sendTrayOpcode(OPCODE_TRAY_BEGIN_MESSAGE, 3000, message.size(), message_id_++);
+	sendTrayOpcode(OPCODE_TRAY_BEGIN_MESSAGE, popup_timeout_*1000, message.size(), message_id_++);
 	for (unsigned int i = 0; i < message.size(); i += TRAY_DATA_CHUNK_SIZE) {
 		sendTrayData(message.substr(i, TRAY_DATA_CHUNK_SIZE));
 	}
@@ -134,7 +154,7 @@ void FreeDesktopTray::drawIcon()
 void FreeDesktopTray::createIconWindow()
 {
 	// Determine the parent
-	Window parent = (tray_window_ == 0 ? DefaultRootWindow(display_) : tray_window_);
+	Window parent = (tray_window_ == 0 || !dock_ ? DefaultRootWindow(display_) : tray_window_);
 
 	// Create the icon window
 	icon_window_width_ = icon_window_height_ = 22;
@@ -162,9 +182,15 @@ void FreeDesktopTray::createIconWindow()
 	XMapWindow(display_,icon_window_);
 
 	// Dock the window (if possible)
-	sendTrayOpcode(OPCODE_TRAY_DOCK, icon_window_);
+	dock();
 }
 
+void FreeDesktopTray::dock()
+{
+	if (dock_) {
+		sendTrayOpcode(OPCODE_TRAY_DOCK, icon_window_);
+	}
+}
 
 void FreeDesktopTray::start()
 {
@@ -225,7 +251,7 @@ void FreeDesktopTray::start()
 			case ClientMessage: 
 				if (event.type == ClientMessage && event.xclient.message_type == manager_atom_ && event.xclient.data.l[1] == selection_atom_) {
 					tray_window_ = XGetSelectionOwner(display_, selection_atom_);
-					sendTrayOpcode(OPCODE_TRAY_DOCK, icon_window_);
+					dock();
 				}
 			case DestroyNotify:
 				if (event.xdestroywindow.window == icon_window_) {

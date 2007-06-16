@@ -7,5 +7,12 @@
 username=myname
 password=mypassword
 
+# Should we dock to the system tray ?
+dock=true
+
 # Check for new messages every X seconds
 check_interval=300
+
+# Number of seconds that popups appear
+# Note: Popups are not yet supported by existing system trays AFAIK
+popup_timeout=3

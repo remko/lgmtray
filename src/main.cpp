@@ -65,7 +65,7 @@ public:
 		popup << "New message" << std::endl;
 		popup << "From: " << message.author_name << " <" << message.author_email << ">" << std::endl;
 		popup << "Subject: " << message.title << std::endl;
-		FreeDesktopTray::instance()->showMessage(popup.str());
+		FreeDesktopTray::instance()->showPopup(popup.str());
 	}
 
 	void noMessages() {
@@ -103,20 +103,31 @@ int main(int argc, char** argv)
 	std::string config_file(home + "/" + CONFIG_FILE);
 	ConfigFileReader config_reader(config_file, &config);
 	config_reader.read();
-	if (config.getValue("username").empty()) {
+
+	std::string username, password;
+	int check_interval = 300;
+	username = config.getValue("username");
+	if (username.empty()) {
 		std::cerr << "Missing username in " << config_file << std::endl;
 		exit(-1);
 	}
-	if (config.getValue("password").empty()) {
+	password = config.getValue("password");
+	if (password.empty()) {
 		std::cerr << "Missing password in " << config_file << std::endl;
 		exit(-1);
 	}
-	if (config.getValue("check_interval").empty()) {
-		std::cerr << "Missing check_interval in " << config_file << std::endl;
-		exit(-1);
+	if (!config.getValue("dock").empty()) {
+		FreeDesktopTray::instance()->setDock(config.getValue("dock") != "false");
 	}
-	int check_interval = atoi(config.getValue("check_interval").c_str());
-	assert(check_interval > 0);
+	if (!config.getValue("check_interval").empty()) {
+		check_interval = atoi(config.getValue("check_interval").c_str());
+		assert(check_interval > 0);
+	}
+	if (!config.getValue("check_popup_timeout").empty()) {
+		int popup_timeout = atoi(config.getValue("check_popup_timeout").c_str());
+		assert(popup_timeout >= 0);
+		FreeDesktopTray::instance()->setPopupTimeout((unsigned int) popup_timeout);
+	}
 
 	// Getter
 	if (config.getValue("dummy_get") == "true") {
@@ -136,7 +147,7 @@ int main(int argc, char** argv)
 	// Alarm
 	MyTimerListener* timer_listener_ = new MyTimerListener();
 	Timer::instance()->addListener(timer_listener_);
-	Timer::instance()->setInterval((unsigned int) check_interval);
+	Timer::instance()->setInterval(check_interval);
 	timer_listener_->alarm();
 
 	FreeDesktopTray::instance()->start();

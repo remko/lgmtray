@@ -15,7 +15,9 @@ public:
 	static FreeDesktopTray* instance();
 	void start();
 	void setIcon(IconName icon);
-	void showMessage(const std::string& message);
+	void setPopupTimeout(unsigned int timeout);
+	void showPopup(const std::string& message);
+	void setDock(bool);
 
 protected:
 	struct Icon {
@@ -30,6 +32,7 @@ protected:
 	void createIconWindow();
 	void sendTrayOpcode(int opcode, long data1 = 0, long data2 = 0, long data3 = 0);
 	void sendTrayData(const std::string&);
+	void dock();
 
 private:
 	FreeDesktopTray();
@@ -44,9 +47,11 @@ private:
 	Window tray_window_;
 	int icon_window_width_, icon_window_height_;
 	Icon messages_icon_, nomessages_icon_, error_icon_;
-	int manager_atom_, selection_atom_;
+	unsigned int manager_atom_;
+	int selection_atom_;
 	int message_id_;
-	
+	int popup_timeout_;
+	bool dock_;
 };
 
 #endif
