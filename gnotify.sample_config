@@ -1,0 +1,11 @@
+# This is an example configuration file for gnotify
+# Fill in the right values, and rename this file to ~/.gnotify
+#
+# WARNING: Every line is sensitive to spaces
+
+# Authentication settings
+username=myname
+password=mypassword
+
+# Check for new messages every X seconds
+check_interval=300
