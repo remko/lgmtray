@@ -14,6 +14,7 @@ public:
 
 	static FreeDesktopTray* instance();
 	void start();
+	void setBackgroundColor(const std::string& color);
 	void setIcon(IconName icon);
 	void setPopupTimeout(unsigned int timeout);
 	void showPopup(const std::string& message);
@@ -42,6 +43,8 @@ private:
 	IconName icon_;
 	bool running_;
 	Display* display_;
+	std::string background_color_name_;
+	unsigned long background_color_;
 	int screen_;
 	Window icon_window_;
 	Window tray_window_;

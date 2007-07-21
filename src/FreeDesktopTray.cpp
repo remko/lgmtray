@@ -68,6 +68,11 @@ void FreeDesktopTray::setDock(bool d)
 	}
 }
 
+void FreeDesktopTray::setBackgroundColor(const std::string& color)
+{
+	background_color_name_ = color;
+}
+
 void FreeDesktopTray::setIcon(IconName icon) 
 {
 	icon_ = icon;
@@ -142,8 +147,10 @@ void FreeDesktopTray::drawIcon()
 {
 	XGCValues values;
 	values.clip_mask = getIcon().mask;
-	unsigned long valuemask = GCClipMask;
+	values.foreground = background_color_;
+	unsigned long valuemask = GCClipMask|GCForeground;
 	GC gc = XCreateGC(display_, icon_window_, valuemask, &values);
+	XFillRectangle(display_, icon_window_, gc, 0, 0, icon_window_width_, icon_window_height_);
 	int x = (icon_window_width_ - getIcon().width) / 2;
 	int y = (icon_window_height_ - getIcon().height) / 2;
 	XCopyArea(display_, getIcon().pixmap, icon_window_, gc, 0, 0, getIcon().width, getIcon().height, x, y);
@@ -155,6 +162,18 @@ void FreeDesktopTray::createIconWindow()
 {
 	// Determine the parent
 	Window parent = (tray_window_ == 0 || !dock_ ? DefaultRootWindow(display_) : tray_window_);
+	// Lookup the background color
+	XColor exact_color, screen_color;
+	if (background_color_name_.size() == 0) {
+		background_color_ = WhitePixel(display_,screen_);
+	}
+	else if (!XLookupColor(display_, DefaultColormap(display_, screen_), background_color_name_.c_str(), &exact_color, &screen_color)) {
+		std::cerr << "Warning: Unknown color: " << background_color_name_ << std::endl;
+		background_color_ = WhitePixel(display_,screen_);
+	}
+	else {
+		background_color_ = screen_color.pixel;
+	}
 
 	// Create the icon window
 	icon_window_width_ = icon_window_height_ = 22;

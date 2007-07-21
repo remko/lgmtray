@@ -5,7 +5,7 @@ CPPFLAGS+=-I..
 
 TESTSUITE=testsuite
 OBJECTS=testsuite.o TestGMailXmlParser.o  TestMessageManager.o TestConfigManager.o
-EXTRA_OBJECTS=../libgmtray.a
+EXTRA_OBJECTS=../liblgmtray.a
 
 $(TESTSUITE): $(OBJECTS) $(EXTRA_OBJECTS)
 	$(CXX) $(LDFLAGS) -o $(TESTSUITE) $(OBJECTS) $(EXTRA_OBJECTS)

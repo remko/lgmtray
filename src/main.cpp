@@ -14,7 +14,7 @@
 #include "TimerListener.h"
 #include "exceptions.h"
 
-#define CONFIG_FILE ".gmtray"
+#define CONFIG_FILE ".lgmtray"
 
 MessageGetter* getter_ = NULL;
 MessageListener* listener_ = NULL;
@@ -127,6 +127,9 @@ int main(int argc, char** argv)
 		int popup_timeout = atoi(config.getValue("check_popup_timeout").c_str());
 		assert(popup_timeout >= 0);
 		FreeDesktopTray::instance()->setPopupTimeout((unsigned int) popup_timeout);
+	}
+	if (!config.getValue("background_color").empty()) {
+		FreeDesktopTray::instance()->setBackgroundColor(config.getValue("background_color"));
 	}
 
 	// Getter

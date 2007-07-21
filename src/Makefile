@@ -1,10 +1,10 @@
 include ../Makefile.config
 
-LIB_TARGET=libgmtray.a
+LIB_TARGET=liblgmtray.a
 LIB_OBJECTS=GMailXmlParser.o CURLMessageGetter.o MessageManager.o FreeDesktopTray.o Timer.o ConfigManager.o ConfigFileReader.o
 
-TARGET=gmtray
-TARGET_OBJECTS=main.o libgmtray.a
+TARGET=lgmtray
+TARGET_OBJECTS=main.o liblgmtray.a
 
 $(TARGET): $(TARGET_OBJECTS)
 	$(CXX) $(LDFLAGS) -o $(TARGET) $(TARGET_OBJECTS)

@@ -16,3 +16,6 @@ check_interval=300
 # Number of seconds that popups appear
 # Note: Popups are not yet supported by existing system trays AFAIK
 popup_timeout=3
+
+# The background color of the tray
+background_color=rgb:00/00/ff
