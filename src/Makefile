@@ -1,17 +1,20 @@
-CXXFLAGS= \
-	$(shell curl-config --cflags) \
-	$(shell xml2-config --cflags) \
-	-Wall
-LDFLAGS= \
-	-L/usr/X11R6/lib/ \
-	$(shell curl-config --libs) \
-	$(shell xml2-config --libs) \
-	-lXpm -lX11
-TARGET=gnotify
-OBJECTS=main.o GMailXmlParser.o CURLMessageGetter.o MessageManager.o FreeDesktopTray.o Timer.o ConfigManager.o ConfigFileReader.o
+include ../Makefile.config
 
-$(TARGET): $(OBJECTS)
-	$(CXX) $(LDFLAGS) -o $(TARGET) $(OBJECTS)
+LIB_TARGET=libgmtray.a
+LIB_OBJECTS=GMailXmlParser.o CURLMessageGetter.o MessageManager.o FreeDesktopTray.o Timer.o ConfigManager.o ConfigFileReader.o
+
+TARGET=gmtray
+TARGET_OBJECTS=main.o libgmtray.a
+
+$(TARGET): $(TARGET_OBJECTS)
+	$(CXX) $(LDFLAGS) -o $(TARGET) $(TARGET_OBJECTS)
+
+$(LIB_TARGET): $(LIB_OBJECTS)
+	ar cr $@ $(LIB_OBJECTS)
 
 clean:
-	-rm -rf $(OBJECTS) $(TARGET)
+	-rm -rf $(TARGET_OBJECTS) $(TARGET) $(LIB_OBJECTS) $(LIB_TARGET)
+	$(MAKE) -C unittest clean
+
+check: $(LIB_TARGET)
+	$(MAKE) -C unittest check

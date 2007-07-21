@@ -14,7 +14,7 @@
 #include "TimerListener.h"
 #include "exceptions.h"
 
-#define CONFIG_FILE ".gnotify"
+#define CONFIG_FILE ".gmtray"
 
 MessageGetter* getter_ = NULL;
 MessageListener* listener_ = NULL;

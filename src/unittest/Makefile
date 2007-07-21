@@ -1,14 +1,14 @@
-CXXFLAGS=$(shell curl-config --cflags) -I/usr/include/libxml2  -I.. -Wall -g
-LDFLAGS=$(shell curl-config --libs) -lxml2 -lcppunit
-TESTSUITE=testsuite
-OBJECTS= \
-	../GMailXmlParser.o TestGMailXmlParser.o \
-	../MessageManager.o TestMessageManager.o \
-	../ConfigManager.o TestConfigManager.o \
-	testsuite.o
+include ../../Makefile.config
 
-$(TESTSUITE): $(OBJECTS)
-	$(CXX) $(LDFLAGS) -o $(TESTSUITE) $(OBJECTS)
+LDFLAGS+=-lcppunit
+CPPFLAGS+=-I..
+
+TESTSUITE=testsuite
+OBJECTS=testsuite.o TestGMailXmlParser.o  TestMessageManager.o TestConfigManager.o
+EXTRA_OBJECTS=../libgmtray.a
+
+$(TESTSUITE): $(OBJECTS) $(EXTRA_OBJECTS)
+	$(CXX) $(LDFLAGS) -o $(TESTSUITE) $(OBJECTS) $(EXTRA_OBJECTS)
 
 clean:
 	-rm -rf $(OBJECTS) $(TESTSUITE)
