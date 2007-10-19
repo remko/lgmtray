@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cassert>
 #include <sstream>
+#include <signal.h>
 
 #include "ConfigFileReader.h"
 #include "ConfigManager.h"
@@ -15,6 +16,11 @@
 #include "exceptions.h"
 
 #define CONFIG_FILE ".lgmtray"
+
+void signal_handler(int) 
+{
+	std::cerr << "Ignoring broken pipe (libcurl bug)" << std::endl;
+}
 
 MessageGetter* getter_ = NULL;
 MessageListener* listener_ = NULL;
@@ -93,6 +99,9 @@ public:
 
 int main(int argc, char** argv)
 {
+	// Initialize signal handler
+	signal(SIGPIPE, signal_handler);
+
 	// Parser
 	GMailXmlParser::initialize();
 
