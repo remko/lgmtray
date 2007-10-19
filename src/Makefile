@@ -7,7 +7,7 @@ TARGET=lgmtray
 TARGET_OBJECTS=main.o liblgmtray.a
 
 $(TARGET): $(TARGET_OBJECTS)
-	$(CXX) $(LDFLAGS) -o $(TARGET) $(TARGET_OBJECTS)
+	$(CXX) -o $(TARGET) $(TARGET_OBJECTS) $(LDFLAGS)
 
 $(LIB_TARGET): $(LIB_OBJECTS)
 	ar cr $@ $(LIB_OBJECTS)

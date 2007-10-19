@@ -19,3 +19,5 @@ popup_timeout=3
 
 # The background color of the tray
 background_color=rgb:00/00/ff
+#background_color=#47709B
+#background_color=red

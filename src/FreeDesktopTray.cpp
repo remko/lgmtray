@@ -167,12 +167,12 @@ void FreeDesktopTray::createIconWindow()
 	if (background_color_name_.size() == 0) {
 		background_color_ = WhitePixel(display_,screen_);
 	}
-	else if (!XLookupColor(display_, DefaultColormap(display_, screen_), background_color_name_.c_str(), &exact_color, &screen_color)) {
+	else if (!XAllocNamedColor(display_, DefaultColormap(display_, screen_), background_color_name_.c_str(), &exact_color, &screen_color)) {
 		std::cerr << "Warning: Unknown color: " << background_color_name_ << std::endl;
 		background_color_ = WhitePixel(display_,screen_);
 	}
 	else {
-		background_color_ = screen_color.pixel;
+		background_color_ = BlackPixel(display_, screen_)^screen_color.pixel;
 	}
 
 	// Create the icon window
