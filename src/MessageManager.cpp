@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "MessageManager.h"
 #include "MessageListener.h"
 #include "MessageGetter.h"

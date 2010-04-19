@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <string.h>
 
 #include "FreeDesktopTray.h"
 #include "icons/22x22/messages.xpm"
