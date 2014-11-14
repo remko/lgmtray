@@ -1,4 +1,4 @@
-# [LGMTray: Lightweight GMail Notifier](http://el-tramo.be/software/lgmtray)
+# [LGMTray: Lightweight GMail Notifier](https://el-tramo.be/lgmtray)
 
 ## About
 
